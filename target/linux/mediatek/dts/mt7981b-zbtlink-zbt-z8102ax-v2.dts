@@ -8,7 +8,7 @@
 
 / {
 	model = "ZBT Z8102AX V2";
-	compatible = "z8102ax-v2", "mediatek,mt7981", "zbtlink,zbt-z8102ax-v2";
+	compatible = "zbtlink,zbt-z8102ax-v2", "mediatek,mt7981";
 
 	aliases {
 		serial0 = &uart0;
@@ -21,7 +21,7 @@
 
 	chosen {
 		stdout-path = "serial0:115200n8";
-		bootargs = "earlycon=uart8250,mmio32,0x11002000 console=ttyS0,115200n8 loglevel=8";
+		bootargs = "earlycon=uart8250,mmio32,0x11002000 console=ttyS0,115200n8";
 	};
 
 	gpio-keys {
@@ -45,28 +45,24 @@
 		compatible = "gpio-leds";
 
 		led_status_red: red {
-			label = "red:status";
 			gpios = <&pio 9 GPIO_ACTIVE_HIGH>;
 			color = <LED_COLOR_ID_RED>;
 			function = LED_FUNCTION_STATUS;
 		};
 
 		led_status_green: green {
-			label = "green:status";
 			gpios = <&pio 10 GPIO_ACTIVE_LOW>;
 			color = <LED_COLOR_ID_GREEN>;
 			function = LED_FUNCTION_STATUS;
 		};
 		
 		led_status_blue: blue {
-			label = "blue:status";
 			gpios = <&pio 11 GPIO_ACTIVE_LOW>;
 			color = <LED_COLOR_ID_BLUE>;
 			function = LED_FUNCTION_STATUS;
 		};
 		
 		led_status_5g1: 5g1 {
-			label = "5g1:status";
 			gpios = <&pio 8 GPIO_ACTIVE_LOW>;
 			color = <LED_COLOR_ID_BLUE>;
 			function = LED_FUNCTION_USB;
@@ -74,7 +70,6 @@
 		};
 		
 		led_status_5g2: 5g2 {
-			label = "5g2:status";
 			gpios = <&pio 13 GPIO_ACTIVE_LOW>;
 			color = <LED_COLOR_ID_BLUE>;
 			function = LED_FUNCTION_USB;
@@ -133,7 +128,6 @@
 		reg = <0>;
 		phy-mode = "2500base-x";
 		nvmem-cell-names = "mac-address";
-		nvmem-cells = <&macaddr_factory_004>;
 
 		fixed-link {
 			speed = <2500>;
@@ -153,7 +147,7 @@
 };
 
 &mdio_bus {
-	switch: switch@0 {
+	switch: switch@1f {
 		compatible = "mediatek,mt7531";
 		reg = <31>;
 		reset-gpios = <&pio 39 GPIO_ACTIVE_HIGH>;
@@ -213,7 +207,7 @@
 
 			nand_rootfs: partition@580000 {
 				label = "ubi";
-                reg = <0x0580000 0x7220000>;
+				reg = <0x0580000 0x7220000>;
 			};
 		};
 	};
@@ -322,7 +316,8 @@
 
 &wifi {
 	status = "okay";
-	mediatek,mtd-eeprom = <&factory 0x0>;
+        nvmem-cells = <&eeprom_factory>;
+        nvmem-cell-names = "eeprom";
 };
 
 &factory {
@@ -335,5 +330,8 @@
 	};
 	macaddr_factory_02a: macaddr@02a {
 		reg = <0x02a 0x6>;
+	};
+        eeprom_factory: eeprom@0 {
+		reg = <0x0 0x1000>;
 	};
 };
